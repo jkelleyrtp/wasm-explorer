@@ -1,4 +1,4 @@
-# wasm-explorer
+# wasm-explorer desktop app
 
 View the WAT of your wasm:
 ![demo.png](/assets/demo.png)
