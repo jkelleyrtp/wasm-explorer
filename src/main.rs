@@ -199,7 +199,9 @@ fn Functions() -> Element {
         return rsx! { "No module loaded" };
     };
 
-    let funcs: Vec<_> = file
+    let mut sort_names = use_signal(|| false);
+
+    let mut funcs: Vec<_> = file
         .module
         .funcs
         .iter()
@@ -207,12 +209,25 @@ fn Functions() -> Element {
             let demangled = func.name.as_ref().unwrap().demangle();
             (demangled, func)
         })
-        .sorted_by(|f1, f2| f1.0.cmp(&f2.0))
         .collect();
+
+    if sort_names() {
+        funcs.sort_by(|f1, f2| f1.0.cmp(&f2.0));
+    }
 
     rsx! {
         div {
-            h1 { "Functions" }
+            div { class: "flex flex-row justify-between",
+                h1 { "Functions" }
+                div { class: "space-x-2",
+                    input {
+                        r#type: "checkbox",
+                        oninput: move |event| sort_names.set(event.checked()),
+                    }
+                    label { class: "text-gray-100", "Alphabetical" }
+
+                }
+            }
             div { class: "flex flex-col",
                 for (demangled_name , func) in funcs.iter() {
                     div {
